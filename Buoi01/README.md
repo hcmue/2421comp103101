@@ -30,6 +30,7 @@
   ```
 
   - Toán tử ...: lấy các phần tử của mảng
+  - export/import
 
 - ReactJS
   - Tạo project đầu tiên: https://react.dev/learn/start-a-new-react-project
