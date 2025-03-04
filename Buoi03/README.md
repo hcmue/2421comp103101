@@ -1,0 +1,3 @@
+- Dùng Vite: `npm create vite@latest demohooks -- --template react`
+  - Dựng node_module bằng lệnh `npm i`
+  - Tham khảo https://vite.dev/guide/
