@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import {MyContext, MyContextProvider} from './MyContext'
+import {Home} from './components/Home'
+import {Profile} from './components/Profile'
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -19,8 +23,16 @@ function App() {
   useEffect(()=> {
     console.log(`Gọi khi thay đổi name: ${count} - ${name}`)
   }, [name]);
+
+  const [comp, setComponent] = useState('HOME');
   return (
-    <>
+    <MyContextProvider>
+
+      <div>
+        <a onClick={() => setComponent('HOME')}>HOME</a> | 
+        <a onClick={() => setComponent('PROFILE')}>PROFILE</a>
+      </div>
+      {(comp === 'HOME') ? <Home /> : <Profile/> }
       <h1>Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
@@ -37,7 +49,7 @@ function App() {
       <p className="read-the-docs">
         Count: {count} | {name}
       </p>
-    </>
+    </MyContextProvider>
   )
 }
 
