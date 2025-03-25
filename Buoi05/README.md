@@ -28,7 +28,8 @@
 
     - Tạo môi trường ảo (chú ý version python mà proj yêu cầu)
     - Activate môi trường ảo
-    - Dựng lại packages: `pip install -r requirements.txt`
+    - Dựng lại packages:
+        `pip install -r requirements.txt`
 
 # Chạy ứng dụng fastAPI.
 
