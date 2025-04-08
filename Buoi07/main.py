@@ -77,6 +77,26 @@ class User(SQLModel, table=True):
     role: int = Field(default=None)
     is_active: bool | None = Field(default=True)
 
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        # token_data = TokenData(username=username)
+    except InvalidTokenError:
+        raise credentials_exception
+
+    # Check username có ko???
+
+    return username
+
+
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
@@ -114,7 +134,12 @@ def read_user(user_id: int, session: SessionDep) -> User:
     return user
 
 @app.delete("/users/{user_id}", tags=["user"])
-def delete_user(user_id: int, session: SessionDep):
+def delete_user(
+    user_id: int,
+    session: SessionDep,
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    print(current_user)
     user = session.get(User, user_id)
     if not user:
         raise HTTPException(
@@ -198,7 +223,6 @@ def authenticate_user(session: SessionDep, username: str, password: str):
         if u.username == username:
             user = u
             break
-    print('Authen found user: ', user)
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -232,6 +256,10 @@ async def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={
+            "sub": user.username
+        },
+        expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
+
